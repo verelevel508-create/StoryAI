@@ -44,7 +44,7 @@ requirements = python3,kivy
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
-
+android.sdk_path = /usr/local/lib/android/sdk
 # (str) Presplash of the application
 #presplash.filename = %(source.dir)s/data/presplash.png
 
