@@ -34,40 +34,36 @@ jobs:
           export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 
-          echo "===== SDK ====="
-          ls -la $ANDROID_HOME
           echo "===== SDKMANAGER ====="
-          which sdkmanager
-          sdkmanager --version
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --version
 
-          yes | sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-          sdkmanager \
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
             "platform-tools" \
             "platforms;android-35" \
             "build-tools;35.0.0"
+
+      - name: Create Buildozer SDK Manager Path
+        run: |
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+
+          mkdir -p $ANDROID_HOME/tools/bin
+
+          rm -f $ANDROID_HOME/tools/bin/sdkmanager
+
+          ln -s \
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+            $ANDROID_HOME/tools/bin/sdkmanager
+
+          echo "===== BUILDOZER SDKMANAGER ====="
+          ls -l $ANDROID_HOME/tools/bin/sdkmanager
+          $ANDROID_HOME/tools/bin/sdkmanager --version
 
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip
           pip install buildozer cython==0.29.34
-
-      - name: Prepare SDK for Buildozer
-        run: |
-          mkdir -p /home/runner/.buildozer/android/platform
-
-          rm -rf /home/runner/.buildozer/android/platform/android-sdk
-
-          ln -s \
-            /usr/local/lib/android/sdk \
-            /home/runner/.buildozer/android/platform/android-sdk
-
-          echo "===== BUILDOZER SDK ====="
-          ls -la /home/runner/.buildozer/android/platform/
-
-          echo "===== SDKMANAGER ====="
-          ls -la /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/
-          /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --version
 
       - name: Build APK
         env:
@@ -75,7 +71,6 @@ jobs:
           ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
         run: |
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-
           buildozer android debug
 
       - name: Upload APK
