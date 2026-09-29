@@ -53,13 +53,11 @@ jobs:
         run: |
           mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
 
-          ln -sf \
+          rm -f ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+
+          ln -s \
             /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager \
             ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-
-          ln -sf \
-            /usr/local/lib/android/sdk/cmdline-tools/latest/bin \
-            ~/.buildozer/android/platform/android-sdk/tools
 
           echo "===== SDK CHECK ====="
           ls -la ~/.buildozer/android/platform/android-sdk/tools/bin/
